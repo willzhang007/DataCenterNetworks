@@ -1,0 +1,297 @@
+package com.network.dataCenter;
+
+import javax.swing.*;
+
+import com.network.http.HttpUtils;
+import com.network.json.JsonAction;
+import com.network.json.JsonService;
+import com.network.json.JsonTools;
+import com.network.tcp.Datacenter2Subserver;
+
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+
+public class AdiministiveView extends JFrame implements ActionListener{
+	
+	//define components for view
+	JLabel dataCenterLabel;
+	JLabel enterLabel;
+	JTextField textNorth;
+	JButton queryButton;
+	JButton returnButton;
+	JPanel buttonpanel;
+	JPanel jpanelNorth;
+	
+	JTable centerTable;
+	//company image label
+	JLabel coImageLabel;
+	//ImageIcon imageIcon;
+
+    JTextArea summaryText;
+	JScrollPane centerScoll;
+	JPanel jpanelCenter;
+	JPanel subPanel;
+	
+	
+	JPanel jpanelSouth;
+	JButton addButton;
+	JButton delButton;
+	JButton refreshButton;
+	JButton getSubServerInfo;
+
+	
+	//**********
+	COTableModel coTableModel;
+	
+	PreparedStatement ps=null;
+	Connection ct=null;
+	ResultSet rs=null;
+	
+	//image loc !!!!!
+	public static final String  netBeans="image/netbeans.png";
+	public static final String  microsoft="image/microsoft.png";
+	
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		AdiministiveView serverAdiministive=new AdiministiveView();
+		//Datacenter2Subserver datacenter2Subserver=new Datacenter2Subserver();
+	}
+
+	public AdiministiveView(){
+		//north components
+		dataCenterLabel=new JLabel(new ImageIcon("image/datacenter.gif"));
+		jpanelNorth=new JPanel(new GridLayout(2,1));	
+		enterLabel=new JLabel("please enter name");	
+		buttonpanel=new JPanel();
+		textNorth=new JTextField(10);
+		queryButton=new JButton("query");
+		queryButton.addActionListener(this);
+		
+		buttonpanel.add(enterLabel);
+		buttonpanel.add(textNorth);
+		buttonpanel.add(queryButton);
+		
+		jpanelNorth.add(dataCenterLabel);
+		jpanelNorth.add(buttonpanel);
+		
+		returnButton=new JButton("return");
+		returnButton.addActionListener(this);
+		
+		
+	
+		
+		//south components
+		addButton=new JButton("add");
+		addButton.addActionListener(this);
+		delButton=new JButton("delete");
+		delButton.addActionListener(this);
+		refreshButton=new JButton("refresh");
+		refreshButton.addActionListener(this);
+		getSubServerInfo=new JButton("get info from subSubser");
+		getSubServerInfo.addActionListener(this);
+		
+		jpanelSouth=new JPanel();
+		jpanelSouth.add(addButton);
+		jpanelSouth.add(delButton);
+		jpanelSouth.add(refreshButton);
+		jpanelSouth.add(getSubServerInfo);
+		
+
+		
+		//create TableModel
+		coTableModel=new COTableModel();
+			
+		//initialize JTable
+		centerTable=new JTable(coTableModel);
+		
+		//initialize JScrollJpane
+		centerScoll=new JScrollPane(centerTable);
+		
+		//initialize CenterJPanel
+		jpanelCenter=new JPanel(new GridLayout(2,1));
+		subPanel=new JPanel(new GridLayout(1,2));
+		jpanelCenter.add(centerScoll);
+		jpanelCenter.add(subPanel);
+		
+		this.add(jpanelNorth,"North");
+		this.add(jpanelCenter, "Center");
+		this.add(jpanelSouth, "South");
+		this.setSize(700,600);
+		this.setLocation(100, 0);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setVisible(true);
+						
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		//define which button is clicked
+		if(e.getSource()==queryButton)
+		{
+			buttonpanel.add(returnButton);
+			buttonpanel.validate();
+					
+			System.out.println("click query button");
+			String coName=this.textNorth.getText().trim();
+			//query sql sentence
+			String querySql="select * from company where coName='"+coName+"'";
+			//create new TableModel and update
+			coTableModel=new COTableModel(querySql);
+			//update Jtable
+			centerTable.setModel(coTableModel);
+			
+			String companyImgLoc=(String)coTableModel.getValueAt(0,4);
+			System.out.println(companyImgLoc);
+			
+			//Icon companyIcon=new ImageIcon(companyImgLoc);
+			//coImageLabel.setIcon(companyIcon);
+			//coImageLabel.revalidate();
+			coImageLabel=new JLabel(new ImageIcon(companyImgLoc));			
+			summaryText=new JTextArea("hello",5,10);
+			
+			try{
+				//set driver
+				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+				ct=DriverManager.getConnection
+						("jdbc:sqlserver://127.0.0.1:1433;databaseName=COManagerDatabase;integratedSecurity=true");
+				ps=ct.prepareStatement("select * from company where coName='"+coName+"'");
+				//implement query
+				rs=ps.executeQuery();
+				rs.next();
+				summaryText.setLineWrap(true);
+				summaryText.setWrapStyleWord(true);
+				summaryText.setFont(new Font("Dialog",0,15));
+				summaryText.setText(rs.getString(7));
+				
+				System.out.println(summaryText.getText());
+			}catch(Exception e1){
+				e1.printStackTrace();
+			}finally{
+				//close resource
+				try{
+					if(rs!=null)
+						rs.close();
+					if(ps!=null)
+						ps.close();
+					if(ct!=null)
+						ct.close();
+					
+				}catch(Exception e2){
+					e2.printStackTrace();
+				}
+			}
+			//add image and summary to subPanel
+			subPanel.add(coImageLabel);
+			System.out.println("add subpanel:imagelabel");
+			subPanel.add(summaryText);
+			System.out.println("add subpanel:summaryText");			
+			
+			subPanel.validate();
+			System.out.println("subPanel validate");
+			
+			jpanelCenter.validate();
+			System.out.println("jpanelCenter validate");
+			
+			
+		}
+		
+		else if(e.getSource()==returnButton)
+		{
+			buttonpanel.remove(returnButton);
+			buttonpanel.repaint();
+			jpanelCenter.remove(subPanel);
+			//jpanelCenter.remove(coImageLabel);
+			jpanelCenter.repaint();
+			//create new TableModel and update
+			coTableModel=new COTableModel();
+			//update Jtable
+			centerTable.setModel(coTableModel);
+		}
+
+		else if(e.getSource()==addButton)
+		{
+			System.out.println("click add button");
+			AddCompanyView addCOView=new AddCompanyView(this,"add company",true);
+			//recreate TableModel
+			coTableModel=new COTableModel();
+			centerTable.setModel(coTableModel);
+		}
+		
+		else if(e.getSource()==delButton)
+		{
+			//get companyID
+			//return selected row
+			//JOptionPane.showMessageDialog(this, "please select one row");
+			int selectedRowNum=this.centerTable.getSelectedRow();
+			//get specific value
+			//noting that column num starts from 0
+			int companyID=(int)coTableModel.getValueAt(selectedRowNum,0);
+			System.out.println("companyID: "+companyID);
+			try{
+				//set driver
+				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+				ct=DriverManager.getConnection
+						("jdbc:sqlserver://127.0.0.1:1433;databaseName=COManagerDatabase;integratedSecurity=true");
+				ps=ct.prepareStatement("delete from company where coId='"+companyID+"'");
+				//implement delete
+				ps.executeUpdate();
+				JOptionPane.showMessageDialog(this, "have deleted one item");
+				
+			}catch(Exception e1){
+				e1.printStackTrace();
+			}finally{
+				//close resource
+				try{
+					if(rs!=null)
+						rs.close();
+					if(ps!=null)
+						ps.close();
+					if(ct!=null)
+						ct.close();
+					
+				}catch(Exception e2){
+					e2.printStackTrace();
+				}
+			}
+			//update TableModel
+			coTableModel=new COTableModel();
+			centerTable.setModel(coTableModel);		
+		}
+		
+		else if(e.getSource()==refreshButton)
+		{
+			System.out.println("click refresh Button");
+			//int selectedRowNum=this.centerTable.getSelectedRow();
+			//System.out.println("the selected row is "+selectedRowNum);
+/*			JsonService service=new JsonService();
+			service.listAllCompany();
+			String msg=JsonTools.createJsonString("companys", service.listAllCompany());
+			System.out.println(msg);	
+			JOptionPane.showMessageDialog(this, "have sent info to browser through http");*/
+			coTableModel=new COTableModel();
+			centerTable.setModel(coTableModel);	
+			
+		}
+		
+		else if(e.getSource()==getSubServerInfo)
+		{
+			System.out.println("click get subserver info");
+			//start tcp thread
+			
+			//1.objectStream send info to the database
+			Datacenter2Subserver datacenter2Subserver=new Datacenter2Subserver();
+			datacenter2Subserver.start();
+			//2.store image by ImageIo to the image folder
+						
+			//display progress bar
+			
+			//refresh table
+		}
+		
+	}
+}

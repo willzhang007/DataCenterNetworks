@@ -1,0 +1,40 @@
+package network;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import network.company;
+
+public class Datacenter2Subserver {
+
+	public Datacenter2Subserver() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		try {
+			ServerSocket Serversocket = new ServerSocket(9101);
+			Socket Server = Serversocket.accept();
+			ObjectInputStream recevie = new ObjectInputStream(Server.getInputStream());
+			company received = (company)recevie.readObject();
+			System.out.println("First transmission");
+			System.out.println(received.onlinePL);
+			DataInputStream receviee = new DataInputStream(Server.getInputStream());
+			while(true){
+				String stringfromsubserver = receviee.readUTF();
+				System.out.println("message update");
+				System.out.println(stringfromsubserver);
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+
+	}
+
+}

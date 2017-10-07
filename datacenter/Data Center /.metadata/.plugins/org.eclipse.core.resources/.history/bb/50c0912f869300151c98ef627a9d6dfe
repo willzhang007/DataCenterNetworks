@@ -1,0 +1,28 @@
+package network;
+
+import java.io.Serializable;
+
+public class company implements Serializable{
+	
+	public int coId;
+	public String coName;
+	public String location;
+	public String department;
+	public String locImageAddress;
+	public String webImageAddress;
+	public String summary;
+	public String onlinePL;
+
+	public company(int coId, String coName, String location, String department, String locImageAddress,
+			String webImageAddress, String summary, String onlinepl) {
+		this.coId = coId;
+		this.coName = coName;
+		this.location = location;
+		this.department = department;
+		this.locImageAddress = locImageAddress;
+		this.webImageAddress = webImageAddress;
+		this.onlinePL = onlinepl;
+		this.summary = summary;// TODO Auto-generated constructor stub
+	}
+
+}

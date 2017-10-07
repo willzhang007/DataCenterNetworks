@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="2015NetProject">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <property name="context-root" value="2015NetProject"/>
+        <property name="java-output-path" value="/2015NetProject/build/classes"/>
+    </wb-module>
+</project-modules>

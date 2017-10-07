@@ -1,0 +1,46 @@
+package com.network.tcp;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.network.common.Company;
+
+public class InsertUpdateSub2DB {
+
+	PreparedStatement ps=null;
+	Connection ct=null;
+	ResultSet rs=null;
+	
+	public boolean insertSubServer2DB(Company company)
+	{
+		boolean insert_flag=false;
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			ct=DriverManager.getConnection
+					("jdbc:sqlserver://127.0.0.1:1433;databaseName=COManagerDatabase;integratedSecurity=true");
+		    ps=ct.prepareStatement("insert into company values(?,?,?,?,?,?,?)");
+			System.out.println("insert subserver to Database");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{			
+				try {
+					if(rs!=null)
+						rs.close();
+					if(ps!=null)
+						ps.close();
+					if(ct!=null)
+						ct.close();
+					} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					}
+				}				
+				return insert_flag;
+				
+	}
+		
+	
+}

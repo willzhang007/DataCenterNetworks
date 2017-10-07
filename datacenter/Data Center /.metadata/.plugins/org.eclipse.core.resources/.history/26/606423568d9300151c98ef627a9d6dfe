@@ -1,0 +1,17 @@
+package com.network.tcp;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.network.common.Company;
+
+public class InsertUpdateSub2DB {
+
+	
+	
+	
+		
+	
+}

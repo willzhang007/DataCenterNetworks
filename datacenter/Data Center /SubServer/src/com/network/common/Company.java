@@ -1,0 +1,92 @@
+package com.network.common;
+
+public class Company implements java.io.Serializable {
+
+	private int coId;
+	private String coName;
+	private String location;
+	private String department;
+	private String locImageAddress;
+	private String webImageAddress;
+	private String summary;
+
+	public Company() {
+
+	}
+
+	public Company(int coId, String coName, String location, String department, String locImageAddress,
+			String webImageAddress, String summary) {
+		super();
+		this.coId = coId;
+		this.coName = coName;
+		this.location = location;
+		this.department = department;
+		this.locImageAddress = locImageAddress;
+		this.webImageAddress = webImageAddress;
+		this.summary = summary;
+	}
+
+	@Override
+	public String toString() {
+		return "Company [coId=" + coId + ", coName=" + coName + ", location=" + location + ", department=" + department
+				+ ", locImageAddress=" + locImageAddress + ", webImageAddress=" + webImageAddress + ", summary="
+				+ summary + "]";
+	}
+
+	public int getCoId() {
+		return coId;
+	}
+
+	public void setCoId(int coId) {
+		this.coId = coId;
+	}
+
+	public String getCoName() {
+		return coName;
+	}
+
+	public void setCoName(String coName) {
+		this.coName = coName;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public String getLocImageAddress() {
+		return locImageAddress;
+	}
+
+	public void setLocImageAddress(String locImageAddress) {
+		this.locImageAddress = locImageAddress;
+	}
+
+	public String getWebImageAddress() {
+		return webImageAddress;
+	}
+
+	public void setWebImageAddress(String webImageAddress) {
+		this.webImageAddress = webImageAddress;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+}

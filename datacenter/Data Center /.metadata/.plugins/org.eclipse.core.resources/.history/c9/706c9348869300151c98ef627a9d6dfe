@@ -1,0 +1,104 @@
+package network;
+
+import java.net.*;
+import java.io.*;
+
+public class BoaCompany extends Thread{
+	
+	public ServerSocket company1 = null;
+	public Socket datacenter;
+	public Socket companya1 = null;
+	public BufferedReader read = null;
+	public ObjectOutputStream output; 
+	public DataOutputStream outputs;
+	int notes = 0;
+	int clientnumber = 0;
+	public int Companyid =1012;
+	public String CoName ="Boa";
+	public String Location ="MA";
+	public String Department ="bank" ;
+	public String LocImageAddress ="image/boa.png";
+	public String WebImageAddress ="boa.png";
+	public String Summary="Hello I am BOA";
+	public String onlinePL= "";
+	public company transmit = new company(Companyid, CoName, Location, Department, LocImageAddress,
+			WebImageAddress, Summary, onlinePL );
+	
+	public BoaCompany() {
+		try {
+			datacenter = new Socket(InetAddress.getLocalHost(),9101);
+		    output = new ObjectOutputStream(datacenter.getOutputStream());
+		    outputs = new DataOutputStream(datacenter.getOutputStream());
+			company1 = new ServerSocket(9100);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}// TODO Auto-generated constructor stub
+	}
+	
+	public class Subsocket extends Thread{
+		
+		public Socket socketthread;
+		public String fromclient = "aaaa";
+		public String endnote = "end";
+
+		public Subsocket(Socket s) {
+			this.socketthread = s;
+			// TODO Auto-generated constructor stub
+		}
+		
+		public void run(){
+			try {
+				DataInputStream recevie = new DataInputStream(socketthread.getInputStream());
+				fromclient = recevie.readUTF();
+				while(!fromclient.equals(endnote)){
+				fromclient = recevie.readUTF();
+				System.out.println(fromclient);
+				}
+				clientnumber--;
+				System.out.println(clientnumber);
+				Summary = "there are " + clientnumber + "clients in the system";
+				transmit.summary=Summary;
+				fromclient = "aaa";
+				socketthread.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+		}
+
+	}
+	
+	public void run(){
+		while(true){
+			try {
+				companya1 = company1.accept();
+				clientnumber++;
+				output.flush();
+				Subsocket subsocket = new Subsocket(companya1);
+				subsocket.start();
+				Thread.sleep(1000);
+				onlinePL = "there are " + clientnumber + " clients in the system";
+				transmit.onlinePL=onlinePL;
+				if(notes == 0){
+					output.writeObject(transmit);
+					output.flush();
+					notes++ ;
+				}else{
+					outputs.writeUTF(transmit.onlinePL);
+					outputs.flush();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+
+}
